@@ -17,9 +17,43 @@ function evm(code) {
 
   while (pc < code.length) {
     const opcode = code[pc];
-    pc++;
 
-    // TODO: implement the EVM here!
+    if (opcode === 0x00) {
+      // STOP
+      break;
+    } else if (opcode === 0x60) {
+      // PUSH1
+      // We add 1 to the pc to skip PUSH1 opcode and access to value
+      const value = code[pc + 1];
+      stack.unshift(value);
+    } else if (opcode == 0x50) {
+      // POP
+      stack.shift();
+    } else if (opcode == 0x01) {
+      // ADD
+
+      const el = stack[0];
+      const el1 = stack[1];
+
+      const sum = el + el1;
+
+      stack.shift();
+      stack.shift();
+
+      // stack.unshift(sum);
+
+      console.log(sum);
+      // stack.pop(stack.length);
+      // console.log
+      // stack.pop(stack.length);
+
+      // // const last2 = stack[-1];
+      // // const value2 = stack.pop(-1);
+
+      // console.log(sum);
+      // stack.push(sum);
+    }
+    pc++;
   }
 
   return { success: true, stack };
