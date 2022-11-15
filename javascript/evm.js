@@ -1,3 +1,4 @@
+const ethers = require("ethers");
 /**
  * EVM From Scratch
  * JavaScript template
@@ -21,6 +22,28 @@ function evm(code) {
     if (opcode === 0x00) {
       // STOP
       break;
+    } else if (opcode == 0x01) {
+      // ADD
+      const sum = code[pc - 1] + code[pc - 3];
+
+      const hex = sum.toString(16);
+
+      console.log(hex);
+      stack.push(hex);
+
+      // stack.shift();
+      // stack.shift();
+      // stack.push(hex);
+      // console.log(stack);
+      // // stack.unshift(sum);
+      // console.log(sum);
+      // // stack.pop(stack.length);
+      // // console.log
+      // // stack.pop(stack.length);
+      // // // const last2 = stack[-1];
+      // // // const value2 = stack.pop(-1);
+      // // console.log(sum);
+      // // stack.push(sum);
     } else if (opcode === 0x60) {
       // PUSH1
       // We add 1 to the pc to skip PUSH1 opcode and access to value
@@ -29,29 +52,6 @@ function evm(code) {
     } else if (opcode == 0x50) {
       // POP
       stack.shift();
-    } else if (opcode == 0x01) {
-      // ADD
-
-      const el = stack[0];
-      const el1 = stack[1];
-
-      const sum = el + el1;
-
-      stack.shift();
-      stack.shift();
-
-      // stack.unshift(sum);
-
-      console.log(sum);
-      // stack.pop(stack.length);
-      // console.log
-      // stack.pop(stack.length);
-
-      // // const last2 = stack[-1];
-      // // const value2 = stack.pop(-1);
-
-      // console.log(sum);
-      // stack.push(sum);
     }
     pc++;
   }
