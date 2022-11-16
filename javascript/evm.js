@@ -15,47 +15,57 @@ const ethers = require("ethers");
 function evm(code) {
   let pc = 0;
   let stack = [];
-
   while (pc < code.length) {
     const opcode = code[pc];
 
-    if (opcode === 0x00) {
-      // STOP
+    if (opcode == 0x00) {
       break;
-    } else if (opcode == 0x01) {
-      // ADD
-      const sum = code[pc - 1] + code[pc - 3];
-
-      const hex = sum.toString(16);
-
-      console.log(hex);
-      stack.push(hex);
-
-      // stack.shift();
-      // stack.shift();
-      // stack.push(hex);
-      // console.log(stack);
-      // // stack.unshift(sum);
-      // console.log(sum);
-      // // stack.pop(stack.length);
-      // // console.log
-      // // stack.pop(stack.length);
-      // // // const last2 = stack[-1];
-      // // // const value2 = stack.pop(-1);
-      // // console.log(sum);
-      // // stack.push(sum);
-    } else if (opcode === 0x60) {
+    } else if (opcode == 0x60) {
       // PUSH1
-      // We add 1 to the pc to skip PUSH1 opcode and access to value
       const value = code[pc + 1];
       stack.unshift(value);
+      console.log("PUSH1 stack", stack);
+      pc++;
     } else if (opcode == 0x50) {
       // POP
       stack.shift();
+    } else if (opcode == 0x01) {
+      // ADD
+      const a = stack.shift();
+      const b = stack.shift();
+
+      const sum = BigInt(a) + BigInt(b);
+      console.log("sum", sum);
+      if (
+        sum >=
+        BigInt(
+          0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+        )
+      ) {
+        const resto =
+          sum -
+          BigInt(
+            0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+          );
+        console.log("resto", resto);
+        stack.unshift(resto);
+      } else {
+        stack.unshift(sum);
+      }
+    } else if (opcode == 0x7f) {
+      //127
+      //PUSH32
+
+      const hexValue = ethers.utils.hexlify(code.slice(pc + 1, pc + 33));
+      stack.unshift(hexValue);
+      console.log("value", stack);
+
+      pc += 32;
+    } else {
+      throw new Error(`Unknown opcode: ${opcode} check${pc}`);
     }
     pc++;
   }
-
   return { success: true, stack };
 }
 
